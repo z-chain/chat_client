@@ -13,7 +13,9 @@ class AccountGeneratorPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: const AccountGeneratorContainer().center(),
+      body: AccountGeneratorContainer(
+        onGenerated: (account) => Navigator.of(context).pop(account),
+      ).center(),
     ).parent(({required child}) => BlocProvider(
           create: (context) =>
               AccountGeneratorCubit(repository: context.read()),

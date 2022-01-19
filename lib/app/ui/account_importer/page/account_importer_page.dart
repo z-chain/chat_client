@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:styled_widget/styled_widget.dart';
 import '../../../index.dart';
 
@@ -11,7 +12,12 @@ class AccountImporterPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: const Text("Account Importer Page").center(),
-    );
+      body: AccountImporterContainer(
+        onImported: (account) => Navigator.of(context).pop(account),
+      ).center(),
+    ).parent(({required child}) => BlocProvider(
+          create: (context) => AccountImporterCubit(repository: context.read()),
+          child: child,
+        ));
   }
 }
