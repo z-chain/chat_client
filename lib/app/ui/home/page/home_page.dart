@@ -15,11 +15,14 @@ class HomePage extends StatelessWidget {
     final appBar = AppBar(
       leading: const AccountAvatar().padding(all: 8).gestures(
           onTap: () => context.read<AccountBloc>().add(AccountSignedOut())),
+      actions: [
+        const AccountQrcode().backgroundColor(Colors.white).padding(all: 4)
+      ],
     );
 
     return Scaffold(
       appBar: appBar,
-      body: const Text('HomePage').center(),
+      body: const Text("home").center(),
     );
   }
 }
