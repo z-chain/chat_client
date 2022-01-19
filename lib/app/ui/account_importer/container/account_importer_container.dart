@@ -12,11 +12,16 @@ class AccountImporterContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return BlocBuilder<AccountImporterCubit, AccountImporterState>(
         builder: (context, state) {
       final importer = context.read<AccountImporterCubit>();
       if (state.status.isSubmissionInProgress) {
         return const CircularProgressIndicator().center();
+      } else if (state.status.isSubmissionFailure) {
+        return Text(state.exception?.message ?? '')
+            .textColor(theme.errorColor)
+            .center();
       }
       return Wrap(
         children: [

@@ -22,8 +22,12 @@ class AccountGeneratorContainer extends StatelessWidget {
         return Wrap(
           children: [
             Text(state.account.address).center(),
+            if (!state.account.isEmpty)
+              Avatar(
+                avatar: state.account.avatar,
+              ).constrained(width: 128, height: 128).center(),
             ElevatedButton(
-                    onPressed: () => generator.generate(),
+                    onPressed: () => generator.generate(""),
                     child: const Text('生成'))
                 .center(),
             if (!state.account.isEmpty)

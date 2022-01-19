@@ -1,1 +1,2 @@
 export 'page/home_page.dart';
+export 'container/account_avatar.dart';

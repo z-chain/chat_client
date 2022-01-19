@@ -9,10 +9,10 @@ class AccountGeneratorCubit extends Cubit<AccountGeneratorState> {
   AccountGeneratorCubit({required this.repository})
       : super(AccountGeneratorState.initial());
 
-  Future<void> generate() {
+  Future<void> generate(String passphrase) {
     emit(state.clone(status: FormzStatus.submissionInProgress));
     return repository
-        .generate()
+        .generate(passphrase)
         .then((value) => emit(
             state.clone(status: FormzStatus.submissionSuccess, account: value)))
         .onError((error, stackTrace) => FormzStatus.submissionFailure);

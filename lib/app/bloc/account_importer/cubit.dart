@@ -15,7 +15,7 @@ class AccountImporterCubit extends Cubit<AccountImporterState> {
         .import(path)
         .then((value) => emit(
             state.clone(status: FormzStatus.submissionSuccess, account: value)))
-        .onError((error, stackTrace) =>
-            emit(state.clone(status: FormzStatus.submissionFailure)));
+        .onError((AppException error, stackTrace) => emit(state.clone(
+            status: FormzStatus.submissionFailure, exception: error)));
   }
 }

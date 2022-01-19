@@ -4,6 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:styled_widget/styled_widget.dart';
 
 import '../index.dart';
+import 'app_theme.dart';
 
 class App extends StatelessWidget {
   static GlobalKey<NavigatorState> navigatorKey = GlobalKey();
@@ -17,6 +18,7 @@ class App extends StatelessWidget {
     return BlocConsumer<AccountBloc, AccountState>(builder: (context, state) {
       return MaterialApp(
         navigatorKey: navigatorKey,
+        theme: AppTheme().light,
         onGenerateRoute: (settings) {
           if (state.authorized) {
             return HomePage.route();

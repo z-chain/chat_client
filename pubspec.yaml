@@ -37,6 +37,14 @@ dependencies:
   styled_widget: 0.4.0+3
   # 表单
   formz: 0.4.1
+  # Bip39协议
+  bip39: 1.0.6
+  # Bip32协议
+  bip32: 2.0.0
+  # Web3Dart
+  web3dart: 2.3.3
+  # 缓存图片
+  cached_network_image: 3.2.0
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2

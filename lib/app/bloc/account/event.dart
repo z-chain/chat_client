@@ -8,6 +8,8 @@ class AccountSignedIn extends AccountEvent {
   AccountSignedIn({required this.account});
 }
 
+class AccountSignedOut extends AccountEvent {}
+
 class AccountChanged extends AccountEvent {
   final Account account;
 

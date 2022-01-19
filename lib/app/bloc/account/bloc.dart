@@ -13,6 +13,7 @@ class AccountBloc extends Bloc<AccountEvent, AccountState> {
       : super(AccountState.initial(account: repository.account)) {
     on<AccountChanged>(_changed);
     on<AccountSignedIn>(_signedIn);
+    on<AccountSignedOut>(_signedOut);
     _subscription = repository.stream.listen((event) {
       add(AccountChanged(account: event));
     });
@@ -24,6 +25,10 @@ class AccountBloc extends Bloc<AccountEvent, AccountState> {
 
   void _signedIn(AccountSignedIn event, Emitter<AccountState> emit) async {
     repository.signIn(event.account);
+  }
+
+  void _signedOut(AccountSignedOut event, Emitter<AccountState> emit) async {
+    repository.signOut();
   }
 
   @override
