@@ -6,12 +6,35 @@ import 'package:styled_widget/styled_widget.dart';
 import '../index.dart';
 import 'app_theme.dart';
 
-class App extends StatelessWidget {
-  static GlobalKey<NavigatorState> navigatorKey = GlobalKey();
-
+class App extends StatefulWidget {
   final SharedPreferences preferences;
 
   const App({Key? key, required this.preferences}) : super(key: key);
+
+  @override
+  State<StatefulWidget> createState() => _AppState();
+}
+
+class _AppState extends State<App> {
+  static GlobalKey<NavigatorState> navigatorKey = GlobalKey();
+
+  late AccountRepository accountRepository;
+
+  late MQTTRepository mqttRepository;
+
+  @override
+  void initState() {
+    super.initState();
+    accountRepository = AccountRepository(preferences: widget.preferences);
+    mqttRepository = MQTTRepository(server: 'broker-cn.emqx.io');
+  }
+
+  @override
+  void dispose() {
+    accountRepository.close();
+    mqttRepository.close();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -36,13 +59,17 @@ class App extends StatelessWidget {
             ?.pushAndRemoveUntil(AccountCreatorPage.route(), (route) => false);
       }
     })
-        .parent(({required child}) => BlocProvider(
-              create: (context) => AccountBloc(repository: context.read()),
-              child: child,
-            ))
-        .parent(({required child}) => RepositoryProvider(
-              create: (context) => AccountRepository(preferences: preferences),
-              child: child,
-            ));
+        .parent(({required child}) => MultiBlocProvider(providers: [
+              BlocProvider(
+                  create: (context) => AccountBloc(repository: context.read())),
+              BlocProvider(
+                  create: (context) => ConnectorBloc(
+                      mqttRepository: mqttRepository,
+                      accountRepository: accountRepository))
+            ], child: child))
+        .parent(({required child}) => MultiRepositoryProvider(providers: [
+              RepositoryProvider.value(value: accountRepository),
+              RepositoryProvider.value(value: mqttRepository)
+            ], child: child));
   }
 }

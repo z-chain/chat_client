@@ -20,6 +20,7 @@ class HomePage extends StatelessWidget {
           .padding(all: 8)
           .gestures(onTap: () => _drawerKey.currentState?.toggle()),
       actions: [
+        const AccountConnector(),
         const AccountQrcode().backgroundColor(Colors.white).padding(all: 4)
       ],
     );
