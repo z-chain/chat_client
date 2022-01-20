@@ -10,7 +10,7 @@ class OnlineUserCount extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<OnlineUserBloc, OnlineUserState>(
         builder: (context, state) {
-      return Text('${state.users.length}');
+      return Text('在线人数:${state.users.length}');
     });
   }
 }
