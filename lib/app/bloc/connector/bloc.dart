@@ -33,7 +33,12 @@ class ConnectorBloc extends Bloc<ConnectorEvent, ConnectorState> {
   void _changed(ConnectorChanged event, Emitter<ConnectorState> emit) async {
     emit(state.clone(address: event.address));
     if (event.address != null) {
+      // 消息
       mqttRepository.subscribe('z-chain/chat/123/message/#');
+      // 联系人
+      mqttRepository.subscribe('z-chain/chat/123/contact/#');
+      // 在线用户
+      mqttRepository.subscribe('z-chain/chat/online-user/#');
     }
   }
 

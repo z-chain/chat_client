@@ -9,16 +9,16 @@ import 'package:web3dart/credentials.dart';
 
 import '../index.dart';
 
-Account _generate(String passphrase) {
-  final mnemonic = bip39.generateMnemonic();
-  final seed = bip39.mnemonicToSeed(mnemonic, passphrase: passphrase);
-  final root = BIP32.fromSeed(seed);
-  final bip32 = root.derivePath("m/44'/12580'/0/0/0");
-  final private = hex.encode(bip32.privateKey!);
-  final public = hex.encode(bip32.publicKey);
-  final address = EthPrivateKey.fromHex(private).address.hexEip55;
-  return Account(private: private, public: public, address: address);
-}
+// Account _generate(String passphrase) {
+//   final mnemonic = bip39.generateMnemonic();
+//   final seed = bip39.mnemonicToSeed(mnemonic, passphrase: passphrase);
+//   final root = BIP32.fromSeed(seed);
+//   final bip32 = root.derivePath("m/44'/12580'/0/0/0");
+//   final private = hex.encode(bip32.privateKey!);
+//   final public = hex.encode(bip32.publicKey);
+//   final address = EthPrivateKey.fromHex(private).address.hexEip55;
+//   return Account(private: private, public: public, address: address);
+// }
 
 class AccountRepository {
   final SharedPreferences preferences;
@@ -54,7 +54,7 @@ class AccountRepository {
   }
 
   Future<Account> generate(String passphrase) async {
-    return await compute(_generate, passphrase);
+    return await compute(Account.generate, passphrase);
   }
 
   Future<Account> import(String path) async {
