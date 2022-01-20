@@ -1,6 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_inner_drawer/inner_drawer.dart';
 import 'package:styled_widget/styled_widget.dart';
 
@@ -20,6 +19,7 @@ class HomePage extends StatelessWidget {
           .padding(all: 8)
           .gestures(onTap: () => _drawerKey.currentState?.toggle()),
       actions: [
+        const OnlineUserCount().center(),
         const AccountConnector(),
         const AccountQrcode().backgroundColor(Colors.white).padding(all: 4)
       ],

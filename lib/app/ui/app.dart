@@ -65,7 +65,10 @@ class _AppState extends State<App> {
               BlocProvider(
                   create: (context) => ConnectorBloc(
                       mqttRepository: mqttRepository,
-                      accountRepository: accountRepository))
+                      accountRepository: accountRepository)),
+              BlocProvider(
+                  create: (context) =>
+                      OnlineUserBloc(repository: mqttRepository)),
             ], child: child))
         .parent(({required child}) => MultiRepositoryProvider(providers: [
               RepositoryProvider.value(value: accountRepository),

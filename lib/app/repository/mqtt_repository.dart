@@ -14,8 +14,14 @@ class MQTTRepository {
 
   String? _address;
 
-  Stream<String?> get connectStatus =>
+  Stream<String?> get connectStatusStream =>
       _connectedController.stream.map((event) => _address = event);
+
+  final StreamController<MqttReceivedMessage<MqttMessage>>
+      _receivedMessageController = StreamController.broadcast();
+
+  Stream<MqttReceivedMessage<MqttMessage>> get receivedMessageStream =>
+      _receivedMessageController.stream;
 
   String? get address => _address;
 
@@ -23,7 +29,7 @@ class MQTTRepository {
 
   MQTTRepository({required this.server});
 
-  void connect(String address) {
+  void connect(String address, {MqttConnectMessage? message}) async {
     _client?.disconnect();
     _subscription?.cancel();
     _client = MqttServerClient(server, address);
@@ -35,10 +41,14 @@ class MQTTRepository {
     _client?.pongCallback = _onPong;
     _client?.logging(on: false);
     _client?.keepAlivePeriod = 20;
+    _client?.connectionMessage = message;
+    await _client?.connect();
     _subscription = _client?.updates?.listen((event) {
-      log('$event');
+      for (var element in event) {
+        log('received message from ${element.topic}');
+        _receivedMessageController.add(element);
+      }
     });
-    _client?.connect();
   }
 
   void _onConnected() {
@@ -49,11 +59,17 @@ class MQTTRepository {
     _connectedController.add(null);
   }
 
-  void _onSubscribed(String topic) {}
+  void _onSubscribed(String topic) {
+    log('subscribed topic succeed : [$topic]');
+  }
 
-  void _onSubscribeFailure(String topic) {}
+  void _onSubscribeFailure(String topic) {
+    log('subscribed topic failure : [$topic]');
+  }
 
-  void _onUnsubscribed(String? topic) {}
+  void _onUnsubscribed(String? topic) {
+    log('unsubscribed topic : [$topic]');
+  }
 
   void _onPong() {
     log('mqtt client on pong');
@@ -63,7 +79,15 @@ class MQTTRepository {
     _client?.subscribe(topic, MqttQos.exactlyOnce);
   }
 
+  void publish(String topic, String message, {bool retain = false}) {
+    final builder = MqttClientPayloadBuilder();
+    builder.addUTF8String(message);
+    _client?.publishMessage(topic, MqttQos.exactlyOnce, builder.payload!,
+        retain: retain);
+  }
+
   void close() {
     _connectedController.close();
+    _receivedMessageController.close();
   }
 }
