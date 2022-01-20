@@ -39,7 +39,7 @@ class HomePage extends StatelessWidget {
       ),
       scaffold: Scaffold(
         appBar: appBar,
-        body: const Text("home").center(),
+        body: const OnlineUsers(),
       ),
       leftChild: const HomeLeftDrawer(),
     );

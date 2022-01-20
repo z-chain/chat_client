@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:sqflite/sqflite.dart';
 import 'package:styled_widget/styled_widget.dart';
 
 import '../index.dart';
@@ -9,7 +10,10 @@ import 'app_theme.dart';
 class App extends StatefulWidget {
   final SharedPreferences preferences;
 
-  const App({Key? key, required this.preferences}) : super(key: key);
+  final Database database;
+
+  const App({Key? key, required this.preferences, required this.database})
+      : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _AppState();
@@ -22,11 +26,15 @@ class _AppState extends State<App> {
 
   late MQTTRepository mqttRepository;
 
+  late ChatRepository inboxRepository;
+
   @override
   void initState() {
     super.initState();
     accountRepository = AccountRepository(preferences: widget.preferences);
     mqttRepository = MQTTRepository(server: 'broker-cn.emqx.io');
+    inboxRepository = ChatRepository(
+        database: widget.database, mqttRepository: mqttRepository);
   }
 
   @override
@@ -72,7 +80,8 @@ class _AppState extends State<App> {
             ], child: child))
         .parent(({required child}) => MultiRepositoryProvider(providers: [
               RepositoryProvider.value(value: accountRepository),
-              RepositoryProvider.value(value: mqttRepository)
+              RepositoryProvider.value(value: mqttRepository),
+              RepositoryProvider.value(value: inboxRepository)
             ], child: child));
   }
 }

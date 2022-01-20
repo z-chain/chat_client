@@ -176,6 +176,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "3.0.1"
+  csslib:
+    dependency: transitive
+    description:
+      name: csslib
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.17.1"
   cupertino_icons:
     dependency: "direct main"
     description:
@@ -190,6 +197,20 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.2.1"
+  diffutil_dart:
+    dependency: transitive
+    description:
+      name: diffutil_dart
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.0.0+1"
+  equatable:
+    dependency: transitive
+    description:
+      name: equatable
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.0.3"
   event_bus:
     dependency: transitive
     description:
@@ -251,6 +272,20 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "3.3.0"
+  flutter_chat_types:
+    dependency: transitive
+    description:
+      name: flutter_chat_types
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "3.2.2"
+  flutter_chat_ui:
+    dependency: "direct main"
+    description:
+      name: flutter_chat_ui
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.4.4"
   flutter_inner_drawer:
     dependency: "direct main"
     description:
@@ -260,6 +295,20 @@ packages:
       url: "https://github.com/kenjishiromajp/flutter_inner_drawer"
     source: git
     version: "1.0.0+1"
+  flutter_link_previewer:
+    dependency: transitive
+    description:
+      name: flutter_link_previewer
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.6.2"
+  flutter_linkify:
+    dependency: transitive
+    description:
+      name: flutter_linkify
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "5.0.2"
   flutter_lints:
     dependency: "direct dev"
     description:
@@ -298,6 +347,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.2.0"
+  html:
+    dependency: transitive
+    description:
+      name: html
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.15.0"
   http:
     dependency: transitive
     description:
@@ -312,6 +368,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "4.0.0"
+  intl:
+    dependency: transitive
+    description:
+      name: intl
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.17.0"
   js:
     dependency: transitive
     description:
@@ -333,6 +396,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "3.0.1"
+  linkify:
+    dependency: transitive
+    description:
+      name: linkify
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "4.1.0"
   lint:
     dependency: transitive
     description:
@@ -459,6 +529,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.11.1"
+  photo_view:
+    dependency: transitive
+    description:
+      name: photo_view
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.12.0"
   platform:
     dependency: transitive
     description:
@@ -598,7 +675,7 @@ packages:
     source: hosted
     version: "1.8.1"
   sqflite:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: sqflite
       url: "https://pub.dartlang.org"
@@ -674,8 +751,64 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.3.0"
-  uuid:
+  url_launcher:
     dependency: transitive
+    description:
+      name: url_launcher
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "6.0.18"
+  url_launcher_android:
+    dependency: transitive
+    description:
+      name: url_launcher_android
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "6.0.14"
+  url_launcher_ios:
+    dependency: transitive
+    description:
+      name: url_launcher_ios
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "6.0.14"
+  url_launcher_linux:
+    dependency: transitive
+    description:
+      name: url_launcher_linux
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.0.3"
+  url_launcher_macos:
+    dependency: transitive
+    description:
+      name: url_launcher_macos
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.0.2"
+  url_launcher_platform_interface:
+    dependency: transitive
+    description:
+      name: url_launcher_platform_interface
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.0.5"
+  url_launcher_web:
+    dependency: transitive
+    description:
+      name: url_launcher_web
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.0.6"
+  url_launcher_windows:
+    dependency: transitive
+    description:
+      name: url_launcher_windows
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.0.2"
+  uuid:
+    dependency: "direct main"
     description:
       name: uuid
       url: "https://pub.dartlang.org"
@@ -724,5 +857,5 @@ packages:
     source: hosted
     version: "3.1.0"
 sdks:
-  dart: ">=2.15.0 <3.0.0"
+  dart: ">=2.15.1 <3.0.0"
   flutter: ">=2.5.0"
