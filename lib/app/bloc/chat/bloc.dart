@@ -6,22 +6,33 @@ import 'package:bloc/bloc.dart';
 import '../../index.dart';
 
 class ChatBloc extends Bloc<ChatEvent, ChatState> {
-  final String author;
+  final String source;
 
-  final String address;
+  final String target;
 
   final ChatRepository repository;
 
   late StreamSubscription _subscription;
 
   ChatBloc(
-      {required this.address, required this.author, required this.repository})
-      : super(ChatState.initial(author: author, address: address)) {
+      {required this.target, required this.source, required this.repository})
+      : super(ChatState.initial(source: source, target: target)) {
+    on<ChatLoaded>(_loaded);
     on<ChatReceived>(_received);
     on<ChatSent>(_sent);
+    final participants = [source, target];
     _subscription = repository.stream.listen((event) {
-      add(ChatReceived(message: event));
+      if (participants.contains(event.remoteId) ||
+          participants.contains(event.author.id)) {
+        add(ChatReceived(message: event));
+      }
     });
+  }
+
+  void _loaded(ChatLoaded event, Emitter<ChatState> emit) async {
+    await repository
+        .messages(source, target)
+        .then((value) => emit(state.clone(messages: value)));
   }
 
   void _received(ChatReceived event, Emitter<ChatState> emit) async {
@@ -29,7 +40,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
   }
 
   void _sent(ChatSent event, Emitter<ChatState> emit) async {
-    repository.send(state.author, state.target, event.message);
+    repository.send(state.source, state.target, event.message);
   }
 
   @override

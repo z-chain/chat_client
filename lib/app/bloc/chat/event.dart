@@ -2,6 +2,8 @@ import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 
 abstract class ChatEvent {}
 
+class ChatLoaded extends ChatEvent {}
+
 class ChatReceived extends ChatEvent {
   final types.Message message;
 

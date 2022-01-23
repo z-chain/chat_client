@@ -1,13 +1,17 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:developer';
 
 import 'package:mqtt_client/mqtt_client.dart';
 import 'package:mqtt_client/mqtt_server_client.dart';
+import 'package:sqflite/utils/utils.dart';
 
 class MQTTRepository {
   final String server;
 
-  StreamSubscription? _subscription;
+  StreamSubscription? _updateSubscription;
+
+  StreamSubscription? _publishSubscription;
 
   final StreamController<String?> _connectedController =
       StreamController.broadcast();
@@ -20,8 +24,14 @@ class MQTTRepository {
   final StreamController<MqttReceivedMessage<MqttMessage>>
       _receivedMessageController = StreamController.broadcast();
 
+  final StreamController<MqttPublishMessage> _publishedMessageController =
+      StreamController.broadcast();
+
   Stream<MqttReceivedMessage<MqttMessage>> get receivedMessageStream =>
       _receivedMessageController.stream;
+
+  Stream<MqttPublishMessage> get publishedMessageStream =>
+      _publishedMessageController.stream;
 
   String? get address => _address;
 
@@ -31,7 +41,8 @@ class MQTTRepository {
 
   void connect(String address, {MqttConnectMessage? message}) async {
     _client?.disconnect();
-    _subscription?.cancel();
+    _updateSubscription?.cancel();
+    _publishSubscription?.cancel();
     _client = MqttServerClient(server, address);
     _client?.onConnected = _onConnected;
     _client?.onDisconnected = _onDisconnected;
@@ -42,12 +53,16 @@ class MQTTRepository {
     _client?.logging(on: false);
     _client?.keepAlivePeriod = 20;
     _client?.connectionMessage = message;
+    // _client?.publishingManager =
     await _client?.connect();
-    _subscription = _client?.updates?.listen((event) {
+    _updateSubscription = _client?.updates?.listen((event) {
       for (var element in event) {
         log('received message from ${element.topic}');
         _receivedMessageController.add(element);
       }
+    });
+    _publishSubscription = _client?.published?.listen((event) {
+      _publishedMessageController.add(event);
     });
   }
 
@@ -87,7 +102,10 @@ class MQTTRepository {
   }
 
   void close() {
+    _updateSubscription?.cancel();
+    _publishSubscription?.cancel();
     _connectedController.close();
     _receivedMessageController.close();
+    _publishedMessageController.close();
   }
 }

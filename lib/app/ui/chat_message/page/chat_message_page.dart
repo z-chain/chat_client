@@ -19,9 +19,10 @@ class ChatMessagePage extends StatelessWidget {
         return const ChatMessageContainer()
             .parent(({required child}) => BlocProvider(
                   create: (context) => ChatBloc(
-                      address: user.address,
-                      author: state.account.address,
-                      repository: context.read()),
+                      target: user.address,
+                      source: state.account.address,
+                      repository: context.read())
+                    ..add(ChatLoaded()),
                   child: child,
                 ));
       }),

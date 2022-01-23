@@ -17,24 +17,40 @@ class ChatRepository {
 
   Stream<types.Message> get stream => _messageController.stream;
 
-  late StreamSubscription _subscription;
+  late StreamSubscription _receivedSubscription;
+
+  late StreamSubscription _publishedSubscription;
 
   ChatRepository({required this.database, required this.mqttRepository}) {
-    _subscription = mqttRepository.receivedMessageStream.listen((event) async {
+    _receivedSubscription =
+        mqttRepository.receivedMessageStream.listen((event) async {
       final topic = event.topic;
       if (topic.contains('message')) {
         final message = event.payload as MqttPublishMessage;
-        final payload =
-            MqttPublishPayload.bytesToStringAsString(message.payload.message);
-        final json = jsonDecode(payload);
-        final chatMessage = types.Message.fromJson(json);
-        final from = chatMessage.author.id;
-        const to = 'me';
-        await database
-            .insert('Inbox', {'source': from, 'target': to, 'msg': payload});
-        _messageController.add(chatMessage);
+        await _processMessage(message);
       }
     });
+
+    _publishedSubscription =
+        mqttRepository.publishedMessageStream.listen((event) async {
+      final topic = event.variableHeader?.topicName ?? '';
+      if (topic.contains('message')) {
+        await _processMessage(event);
+      }
+    });
+  }
+
+  Future<void> _processMessage(MqttPublishMessage message) async {
+    final bytes = message.payload.message.toList();
+
+    final payload = utf8.decode(bytes);
+    final json = jsonDecode(payload);
+    final chatMessage = types.Message.fromJson(json);
+    final source = chatMessage.author.id;
+    final target = chatMessage.remoteId;
+    await database
+        .insert('Inbox', {'source': source, 'target': target, 'msg': payload});
+    _messageController.add(chatMessage);
   }
 
   void send(String source, String target, types.Message message) {
@@ -42,8 +58,21 @@ class ChatRepository {
         'z-chain/chat/$target/message/$source', jsonEncode(message.toJson()));
   }
 
+  Future<List<types.Message>> messages(String source, String target) async {
+    final List<Map> messages = await database.query('Inbox',
+        columns: ['id', 'msg'],
+        where: 'source = ? or target = ? or source = ? or target = ?',
+        whereArgs: [source, source, target, target],
+        orderBy: "id desc");
+    return messages
+        .map((e) => jsonDecode(e['msg']))
+        .map((e) => types.Message.fromJson(e))
+        .toList();
+  }
+
   void close() {
     _messageController.close();
-    _subscription.cancel();
+    _receivedSubscription.cancel();
+    _publishedSubscription.cancel();
   }
 }
