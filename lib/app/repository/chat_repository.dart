@@ -61,8 +61,8 @@ class ChatRepository {
   Future<List<types.Message>> messages(String source, String target) async {
     final List<Map> messages = await database.query('Inbox',
         columns: ['id', 'msg'],
-        where: 'source = ? or target = ? or source = ? or target = ?',
-        whereArgs: [source, source, target, target],
+        where: '(source = ? and target = ?) or (source = ? and target = ?)',
+        whereArgs: [source, target, target, source],
         orderBy: "id desc");
     return messages
         .map((e) => jsonDecode(e['msg']))
