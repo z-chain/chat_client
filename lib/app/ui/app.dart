@@ -28,13 +28,18 @@ class _AppState extends State<App> {
 
   late ChatRepository inboxRepository;
 
+  late NotificationRepository notificationRepository;
+
   @override
   void initState() {
     super.initState();
     accountRepository = AccountRepository(preferences: widget.preferences);
     mqttRepository = MQTTRepository(server: 'broker-cn.emqx.io');
+    notificationRepository = NotificationRepository()..init();
     inboxRepository = ChatRepository(
-        database: widget.database, mqttRepository: mqttRepository);
+        database: widget.database,
+        mqttRepository: mqttRepository,
+        notificationRepository: notificationRepository);
   }
 
   @override
@@ -77,11 +82,16 @@ class _AppState extends State<App> {
               BlocProvider(
                   create: (context) =>
                       OnlineUserBloc(repository: mqttRepository)),
+              BlocProvider(
+                  create: (context) =>
+                      NotificationBloc(repository: notificationRepository)
+                        ..add(NotificationLoaded()))
             ], child: child))
         .parent(({required child}) => MultiRepositoryProvider(providers: [
               RepositoryProvider.value(value: accountRepository),
               RepositoryProvider.value(value: mqttRepository),
-              RepositoryProvider.value(value: inboxRepository)
+              RepositoryProvider.value(value: inboxRepository),
+              RepositoryProvider.value(value: notificationRepository)
             ], child: child));
   }
 }

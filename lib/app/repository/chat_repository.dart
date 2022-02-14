@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:chat_client/app/index.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 import 'package:mqtt_client/mqtt_client.dart';
 import 'package:sqflite/sqflite.dart';
@@ -12,6 +13,8 @@ class ChatRepository {
 
   final MQTTRepository mqttRepository;
 
+  final NotificationRepository notificationRepository;
+
   final StreamController<types.Message> _messageController =
       StreamController.broadcast();
 
@@ -21,7 +24,10 @@ class ChatRepository {
 
   late StreamSubscription _publishedSubscription;
 
-  ChatRepository({required this.database, required this.mqttRepository}) {
+  ChatRepository(
+      {required this.database,
+      required this.mqttRepository,
+      required this.notificationRepository}) {
     _receivedSubscription =
         mqttRepository.receivedMessageStream.listen((event) async {
       final topic = event.topic;
@@ -50,6 +56,7 @@ class ChatRepository {
     final target = chatMessage.remoteId;
     await database
         .insert('Inbox', {'source': source, 'target': target, 'msg': payload});
+    notificationRepository.show(source, payload);
     _messageController.add(chatMessage);
   }
 

@@ -1,16 +1,45 @@
+import 'package:app_settings/app_settings.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_inner_drawer/inner_drawer.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:styled_widget/styled_widget.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../main.dart';
 import '../../../index.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   static Route route() => MaterialPageRoute(builder: (context) => HomePage());
 
+  const HomePage({Key? key}) : super(key: key);
+
+  @override
+  State<StatefulWidget> createState() => HomePageState();
+}
+
+class HomePageState extends State<HomePage> with WidgetsBindingObserver {
   final GlobalKey<InnerDrawerState> _drawerKey = GlobalKey();
 
-  HomePage({Key? key}) : super(key: key);
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance?.addObserver(this);
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance?.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) async {
+    if (state == AppLifecycleState.resumed) {
+      context.read<NotificationBloc>().add(NotificationLoaded());
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -19,6 +48,22 @@ class HomePage extends StatelessWidget {
           .padding(all: 8)
           .gestures(onTap: () => _drawerKey.currentState?.toggle()),
       actions: [
+        BlocListener<NotificationBloc, NotificationState>(
+          listener: (context, state) {
+            if (state.granted) {
+              context.read<NotificationBloc>().add(NotificationEnabled());
+            }
+          },
+          listenWhen: (prev, state) => prev.granted != state.granted,
+          child: IconButton(
+              onPressed: () => AppSettings.openNotificationSettings(),
+              icon: const Icon(Icons.notifications)),
+        ),
+        IconButton(
+            onPressed: () => context
+                .read<NotificationRepository>()
+                .show("title", "${DateTime.now()}"),
+            icon: const Icon(Icons.message)),
         const OnlineUserCount().center(),
         const AccountConnector(),
         const AccountQrcode().backgroundColor(Colors.white).padding(all: 4)
