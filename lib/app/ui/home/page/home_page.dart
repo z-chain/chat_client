@@ -1,13 +1,11 @@
 import 'package:app_settings/app_settings.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_inner_drawer/inner_drawer.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:permission_handler/permission_handler.dart';
-import 'package:styled_widget/styled_widget.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_inner_drawer/inner_drawer.dart';
+import 'package:move_to_background/move_to_background.dart';
+import 'package:styled_widget/styled_widget.dart';
 
-import '../../../../main.dart';
 import '../../../index.dart';
 
 class HomePage extends StatefulWidget {
@@ -87,6 +85,11 @@ class HomePageState extends State<HomePage> with WidgetsBindingObserver {
         body: const OnlineUsers(),
       ),
       leftChild: const HomeLeftDrawer(),
-    );
+    ).parent(({required child}) => WillPopScope(
+        child: child,
+        onWillPop: () async {
+          await MoveToBackground.moveTaskToBack();
+          return Future.value(false);
+        }));
   }
 }
