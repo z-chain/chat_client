@@ -67,11 +67,16 @@ class MQTTRepository {
   }
 
   void _onConnected() {
+    log("mqtt has been connected.");
     _connectedController.add(_client?.clientIdentifier);
   }
 
   void _onDisconnected() {
     _connectedController.add(null);
+    log("mqtt has been disconnected.");
+    Timer(const Duration(seconds: 5), () {
+      _client?.connect();
+    });
   }
 
   void _onSubscribed(String topic) {
